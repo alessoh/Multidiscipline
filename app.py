@@ -11,6 +11,8 @@ llm = ChatOpenAI(
     model_name="openai/gpt-4-turbo-preview" #  gpt-4-turbo-preview or mixtral-8x7b-32768 
 )
 
+# ??
+
 file_read_tool = FileReadTool(
 	file_path='template.md',
 	description='A tool to read the Story Template file and understand the expected output format.'
