@@ -1,6 +1,6 @@
-# AI-Powered Space Storybook Generator
+# Multidiscipline AI-Powered Research Book Generator
 
-This project uses AI agents to create an illustrated storybook about space ships, combining creative writing with image generation and document formatting.
+This project uses AI agents to create an illustrated book about space, combining creative writing with image generation and document formatting.
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -14,7 +14,7 @@ This project uses AI agents to create an illustrated storybook about space ships
 
 ## Introduction
 
-This AI-powered storybook generator leverages multiple AI agents to create a complete, illustrated storybook about space ships. The system handles everything from outlining and writing to editing, image generation, and final PDF creation.
+This AI-powered book generator leverages multiple AI agents to create a complete, illustrated book about space ships. The system handles everything from outlining and writing to editing, image generation, and final PDF creation.
 
 ## Features
 
