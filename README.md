@@ -1,51 +1,52 @@
-# Multidiscipline: AI Agent Orchestration Framework
+# AI-Powered Space Storybook Generator
 
-Multidiscipline is an advanced self-improvement framework for orchestrating role-playing, autonomous AI agents. Built on top of CrewAI, Multidiscipline fosters collaborative intelligence, empowering agents to work together seamlessly and tackle complex tasks.
+This project uses AI agents to create an illustrated storybook about space ships, combining creative writing with image generation and document formatting.
 
 ## Table of Contents
 1. [Introduction](#introduction)
-2. [Key Features](#key-features)
+2. [Features](#features)
 3. [Architecture](#architecture)
 4. [Installation](#installation)
 5. [Usage](#usage)
 6. [Project Structure](#project-structure)
-7. 
-8. [Continuous Learning](#continuous-learning)
-9. [Future Enhancements](#future-enhancements)
-10. [Contributing](#contributing)
-11. [License](#license)
-12. [Contact](#contact)
+7. [Contributing](#contributing)
+8. [License](#license)
 
 ## Introduction
 
-As AI foundation models advance, they are approaching PhD-level reasoning and logic abilities. While AI doctors, lawyers, and engineers aren't ready to practice independently, every professional will want a specialized AI partner to assist them in delivering premium service to their clients.
+This AI-powered storybook generator leverages multiple AI agents to create a complete, illustrated storybook about space ships. The system handles everything from outlining and writing to editing, image generation, and final PDF creation.
 
-Multidisciplineaddresses the challenges of poor coordination, limited adaptability, and inconsistent performance in AI agent teams. It provides power and flexibility for AI agents to synchronize their tasks on one project and train as a team over many projects.
+## Features
 
-## Key Features
- 
+- AI-driven story outline creation
+- Automated story writing and editing
+- AI-generated chapter illustrations
+- Markdown formatting of the story content
+- Conversion of the formatted story to a PDF
+
 ## Architecture
 
-Multidiscipline uses a modular architecture with separate components for different functionalities:
+The project uses CrewAI for agent orchestration and consists of several specialized AI agents:
 
-1. **Core Logic (app.py):** Manages AI crews and orchestrates the main workflow.
-2. **User Interface (streamlit_app.py):** Provides an intuitive Streamlit-based interface for user interactions.
-
-
-The project leverages CrewAI for agent orchestration and extends it with custom postmortem analysis and continuous learning capabilities.
+1. **Story Outliner:** Creates the story structure and chapter outlines
+2. **Story Writer:** Writes the full content for each chapter
+3. **Story Editor:** Refines and improves the written content
+4. **Image Generator:** Creates illustrations for each chapter
+5. **Content Formatter:** Formats the story in Markdown
+6. **PDF Converter:** Converts the Markdown to a final PDF
 
 ## Installation
 
 1. Clone the repository:
    ```
-   git clone https://github.com/alessoh/Multidiscipline.git
-   cd Multidiscipline
+   git clone https://github.com/yourusername/ai-space-storybook-generator.git
+   cd ai-space-storybook-generator
    ```
 
 2. Create and activate a virtual environment:
    ```
-   conda create -n Multidiscipline python=3.11
-   conda activate Multidiscipline
+   python -m venv venv
+   source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
    ```
 
 3. Install the required packages:
@@ -57,63 +58,40 @@ The project leverages CrewAI for agent orchestration and extends it with custom 
    Create a `.env` file in the project root and add your API keys:
    ```
    OPENAI_API_KEY=your_openai_api_key
-   SERPER_API_KEY=your_serper_api_key
+   GROQ_API_KEY=your_groq_api_key
    ```
 
 ## Usage
 
-Run the Streamlit app:
+Run the main script:
 ```
-streamlit run streamlit_app.py
+python app.py
 ```
 
-Follow the prompts in the web interface to conduct AI analyses and postmortem evaluations.
+The script will generate a complete storybook, including:
+- A story outline
+- Written content for 5 chapters
+- Edited and refined story text
+- An illustration for each chapter
+- A formatted Markdown file
+- A final PDF document
 
 ## Project Structure
 
-- `app.py`: Core logic for running AI crews and postmortem analysis
-- `streamlit_app.py`: Streamlit-based user interface
-- `postmortem_data_processor.py`: Handles postmortem data collection and preprocessing
-
-
-
-
-### Key Components:
-
-
-
-   # Diagram of current logic
-
-![Alt text]()
-
-## Continuous Learning
-
-
-
-## Future Enhancements
-
-
-
-   # Diagram of future 
-
-![Alt text]
+- `app.py`: Main script containing the AI agents and task definitions
+- `template.md`: Template for the story's Markdown format
+- `requirements.txt`: List of required Python packages
+- `README.md`: This file, containing project documentation
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request. Here are some areas where contributions would be particularly valuable:
 
-- Implementing any of the future enhancements listed above.
-- Improving test coverage and documentation.
-- Optimizing performance of existing components.
-- Adding new features or integrations that align with SYZYGI's goals.
+- Improving the AI agents' capabilities
+- Enhancing the image generation prompts
+- Adding new features like character dialogue or interactive elements
+- Optimizing the PDF conversion process
 
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Contact
-
-- **Homepage:** [AI HIVE](https://www.ai-hive.net/)
-- **Email:** info@ai-hive.net
-
-For any questions, feedback, or bug reports, please open an issue in the GitHub repository or contact us via email.
