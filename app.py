@@ -2,21 +2,47 @@ from crewai import Agent, Task, Crew, Process
 from crewai_tools import tool
 from langchain_openai import ChatOpenAI
 from crewai_tools.tools import FileReadTool
-import os, requests, re, mdpdf, subprocess
+import os
+import requests
+import re
+import mdpdf
+import subprocess
 from openai import OpenAI
+from duckduckgo_search import DDGS
 
+# LLM Configuration
 llm = ChatOpenAI(
-    openai_api_base="https://api.groq.com/openai/v1", # https://api.openai.com/v1 or https://api.groq.com/openai/v1 
-    openai_api_key=os.getenv("GROQ_API_KEY"), # os.getenv("OPENAI_API_KEY") or os.getenv("GROQ_API_KEY")
-    model_name="openai/gpt-4-turbo-preview" #  gpt-4-turbo-preview or mixtral-8x7b-32768 
+    openai_api_base="https://api.groq.com/openai/v1",  # https://api.openai.com/v1 or https://api.groq.com/openai/v1 
+    openai_api_key=os.getenv("GROQ_API_KEY"),  # os.getenv("OPENAI_API_KEY") or os.getenv("GROQ_API_KEY")
+    model_name="openai/gpt-4-turbo-preview"  # gpt-4-turbo-preview or mixtral-8x7b-32768 
 )
 
-# ??
-
+# Tools
 file_read_tool = FileReadTool(
-	file_path='template.md',
-	description='A tool to read the Story Template file and understand the expected output format.'
+    file_path='template.md',
+    description='A tool to read the Story Template file and understand the expected output format.'
 )
+
+@tool
+def web_search(query: str, num_results: int = 5) -> str:
+    """
+    Perform a web search using DuckDuckGo and return the results.
+
+    Args:
+        query (str): The search query.
+        num_results (int): The number of results to return (default: 5).
+
+    Returns:
+        str: A string containing the search results, with each result on a new line.
+    """
+    with DDGS() as ddgs:
+        results = list(ddgs.text(query, max_results=num_results))
+    
+    formatted_results = []
+    for i, result in enumerate(results, 1):
+        formatted_results.append(f"{i}. Title: {result['title']}\n   URL: {result['href']}\n   Snippet: {result['body']}\n")
+    
+    return "\n".join(formatted_results)
 
 @tool
 def generateimage(chapter_content_and_character_details: str) -> str:
@@ -72,19 +98,21 @@ def convermarkdowntopdf(markdownfile_name: str) -> str:
     
     return output_file
 
+# Agents
 story_outliner = Agent(
-  role='Story Outliner',
-  goal='Develop an outline for a children\'s storybook about space ships, including chapter titles and characters for 5 chapters.',
-  backstory="An imaginative creator who lays the foundation of captivating stories for children.",
-  verbose=True,
-  llm=llm,
-  allow_delegation=False
+    role='Story Outliner',
+    goal='Develop an outline for a storybook about space ships, including chapter titles and characters for 5 chapters.',
+    backstory="An imaginative creator who lays the foundation of captivating stories.",
+    verbose=True,
+    llm=llm,
+    tools=[web_search],
+    allow_delegation=False
 )
 
 story_writer = Agent(
   role='Story Writer',
-  goal='Write the full content of the story for all 5 chapters, each chapter 500 words, weaving together the narratives and characters outlined.',
-  backstory="A talented storyteller who brings to life the world and characters outlined, crafting engaging and imaginative tales for children.",
+  goal='Write the full content of the story for all 5 chapters, make each chapter 500 words, weaving together the narratives and characters outlined.',
+  backstory="A talented storyteller who brings to life the world and characters outlined, crafting engaging and imaginative tales.",
   verbose=True,
   llm=llm,
   allow_delegation=False
@@ -93,7 +121,7 @@ story_writer = Agent(
 story_editor = Agent(
   role='Story Editor',
   goal='Read through the content carefully, identifying areas that need improvement in terms of grammar, punctuation, spelling, syntax, and style. output a fully edited version that takes into account all your suggestions.',
-  backstory="you will act as an AI copyeditor with a keen eye for detail and a deep understanding of language, style, and grammar. Your task is to refine and improve written content provided by users, offering advanced copyediting techniques and suggestions to enhance the overall quality of the text",
+  backstory="you will act as an AI copyeditor with a keen eye for detail and a deep understanding of language, style, and grammar. Your task is to refine and improve written content provided by users, offering advanced copyediting techniques and suggestions to enhance the overall quality of the text and make each chapter about 500 words",
   verbose=True,
   llm=llm,
   allow_delegation=False
@@ -132,33 +160,35 @@ markdown_to_pdf_creator = Agent(
 
 # Create tasks for the agents
 task_outline = Task(
-    description='Create an outline for the children\'s storybook about space ships, detailing chapter titles and character descriptions for 5 chapters.',
+    description='''Create an outline for the storybook about space ships, detailing chapter titles and character descriptions for 5 chapters. 
+    Use the web_search tool to research interesting facts about space, spaceships, and space exploration to incorporate into your outline. 
+    Focus on making the story both educational and engaging.''',
     agent=story_outliner,
-    expected_output='A structured outline document containing 5 chapter titles, with detailed character descriptions and the main plot points for each chapter.'
+    expected_output='A structured outline document containing 5 chapter titles, with detailed character descriptions and the main plot points for each chapter, incorporating interesting space-related facts.'
 )
 
 task_write = Task(
-    description='Using the outline provided, write the full story content for all chapters, ensuring a cohesive and engaging narrative for children. Each Chapter 500 words. Include Title of the story at the top.',
+    description='Using the outline provided, write the full story content of about 500 words for each of five chapters, ensuring a cohesive and engaging narrative. Each Chapter 500 words. Include Title of the story at the top.',
     agent=story_writer,
-    expected_output='A complete manuscript of the children\'s storybook about space ships, with 5 chapters. Each chapter should contain approximately 500 words, following the provided outline and integrating the characters and plot points into a cohesive narrative.'
+    expected_output='A complete manuscript of the  storybook about space ships, with 5 chapters. Each chapter should contain approximately 500 words, following the provided outline and integrating the characters and plot points into a cohesive narrative.'
 )
 
 task_edit = Task(
-    description='Using the full story provided, edit the full story content for all chapters, ensuring a cohesive and engaging narrative for children. Each Chapter 500 words. Include Title of the story at the top.',
+    description='Using the full story provided, edit the full story content for all chapters, ensuring a cohesive and engaging narrative, with each Chapter about 500 words. Include Title of the story at the top.',
     agent=story_editor,
-    expected_output='A complete manuscript of the children\'s storybook about space ships, with 5 chapters. Each chapter should contain approximately 500 words, following the provided outline and integrating the characters and plot points into a cohesive narrative.'
+    expected_output='A complete manuscript of the storybook about space ships, with 5 chapters. Each chapter should contain approximately 500 words, following the provided outline and integrating the characters and plot points into a cohesive narrative.'
 )
 
 task_image_generate = Task(
-    description='Generate 5 images that captures the essence of the children\'s storybook about space ships,, aligning with the themes, characters, and narrative outlined for the chapters. Do it one by one.',
+    description='Generate 5 images that captures the essence of the storybook about space ships,, aligning with the themes, characters, and narrative outlined for the chapters. Do it one by one.',
     agent=image_generator,
-    expected_output='A digital image file that visually represents the overarching theme of the children\'s storybook, incorporating elements from the characters and plot as described in the outline. The image should be suitable for inclusion in the storybook as an illustration.',
+    expected_output='A digital image file that visually represents the overarching theme of the storybook, incorporating elements from the characters and plot as described in the outline. The image should be suitable for inclusion in the storybook as an illustration.',
 )
 
 task_format_content = Task(
     description='Format the story content in markdown, including an image at the beginning of each chapter.',
     agent=content_formatter,
-    expected_output='The entire storybook content formatted in markdown, with each chapter title followed by the corresponding image and the chapter content.',
+    expected_output='The entire storybook content formatted in markdown, with each chapter title followed by the corresponding image and the chapter content of about 500 words.',
     context=[task_write, task_image_generate],
     output_file="story.md"
 )

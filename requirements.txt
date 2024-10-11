@@ -1,0 +1,4 @@
+crewai[tools] 
+mdpdf
+streamlit
+duckduckgo_search
